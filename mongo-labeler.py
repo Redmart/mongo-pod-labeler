@@ -95,4 +95,4 @@ v1Api = client.CoreV1Api()
 while True:
     find_mongo_and_label(v1Api)
     logging.debug(f"Sleeping {args.sleep_seconds}...")
-    time.sleep(args.sleep_seconds)
+    time.sleep(int(args.sleep_seconds))
