@@ -4,6 +4,6 @@ RUN pip install kubernetes pymongo
 
 COPY ./mongo-labeler.py .
 
-ENTRYPOINT [ "python" ]
+ENTRYPOINT [ "python3" ]
 
 CMD ["./mongo-labeler.py"]
