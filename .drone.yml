@@ -1,7 +1,7 @@
 pipeline:
   push-docker-tags:
     image: plugins/docker
-    repo: redmart/mongo-labeler
+    repo: redmart/mongo-pod-labeler
     auto_tag: true
     secrets: [ docker_username, docker_password ]
     when:
@@ -9,7 +9,7 @@ pipeline:
 
   docker-build-pr:
     image: plugins/docker
-    repo: redmart/mongo-labeler
+    repo: redmart/mongo-pod-labeler
     dry_run: true
     auto_tag: true
     when:
