@@ -32,7 +32,7 @@ def get_mongo_pods(k8s_api):
 
 
 def label_mongo_pods(k8s_api, pod_name, labels):
-    logging.info(f"applying label {labels.get('role')} to {pod_name}")
+    logging.info(f"applying label {labels.get('redmart.com/mongo-role')} to {pod_name}")
     return k8s_api.patch_namespaced_pod(name=pod_name, namespace="{}".format(args.namespace), body=labels)
 
 
