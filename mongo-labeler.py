@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 import argparse
 import logging
-import time
 
 import pymongo
+import time
 from kubernetes import config, client
 from pymongo.errors import ConnectionFailure
 
@@ -27,7 +27,7 @@ def get_mongo_pods(k8s_api):
     pod_details = k8s_api.list_namespaced_pod(namespace="{}".format(args.namespace),
                                               label_selector="{}".format(args.pod_selector))
     for item in pod_details.items:
-        mongo_host_names.append(item.metadata.name + "." + item.metadata.namespace)
+        mongo_host_names.append(item.metadata.name)
     return mongo_host_names
 
 
