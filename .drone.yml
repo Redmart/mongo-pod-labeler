@@ -1,0 +1,16 @@
+pipeline:
+  push-docker-tags:
+    image: plugins/docker
+    repo: redmart/mongo-labeler
+    auto_tag: true
+    secrets: [ docker_username, docker_password ]
+    when:
+      event: tag
+
+  docker-build-pr:
+    image: plugins/docker
+    repo: redmart/mongo-labeler
+    dry_run: true
+    auto_tag: true
+    when:
+      event: pull_request
