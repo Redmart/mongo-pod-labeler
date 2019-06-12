@@ -36,8 +36,8 @@ def label_mongo_pods(k8s_api, pod_name, labels):
     return k8s_api.patch_namespaced_pod(name=pod_name, namespace="{}".format(args.namespace), body=labels)
 
 
-def generate_pod_label_body(labels):
-    patch_content = {"kind": "Pod", "apiVersion": "v1", "metadata": labels}
+def generate_pod_label_body(label):
+    patch_content = {"kind": "Pod", "apiVersion": "v1", "metadata": {"redmart.com/mongo-role": label}}
     return patch_content
 
 
@@ -51,7 +51,7 @@ def find_mongo_and_label(v1):
         else:
             mongo_role = "secondary"
             logging.debug(f"{pod_data[0]} is a secondary")
-        label_mongo_pods(v1, pod_data[0], generate_pod_label_body({"redmart.com/mongo-role": mongo_role}))
+        label_mongo_pods(v1, pod_data[0], generate_pod_label_body(mongo_role))
 
 
 # MAIN
