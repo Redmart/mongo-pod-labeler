@@ -27,7 +27,7 @@ def get_mongo_pods(k8s_api):
     pod_details = k8s_api.list_namespaced_pod(namespace="{}".format(args.namespace),
                                               label_selector="{}".format(args.pod_selector))
     for item in pod_details.items:
-        mongo_host_names.append(item.metadata.name)
+        mongo_host_names.append(item.metadata.name + "." + item.metadata.generateName[:-1] + "." + item.metadata.namespace)
     return mongo_host_names
 
 
