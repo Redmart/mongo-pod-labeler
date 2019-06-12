@@ -27,7 +27,7 @@ def get_mongo_pods(k8s_api):
     pod_details = k8s_api.list_namespaced_pod(namespace="{}".format(args.namespace),
                                               label_selector="{}".format(args.pod_selector))
     for item in pod_details.items:
-        mongo_host_names.append(item.metadata.name + "." + item.metadata.generate_name[:-1] + "." + item.metadata.namespace)
+        mongo_host_names.append((item.metadata.name, item.metadata.generate_name[:-1], item.metadata.namespace))
     return mongo_host_names
 
 
@@ -42,14 +42,16 @@ def generate_pod_label_body(labels):
 
 
 def find_mongo_and_label(v1):
-    pods = get_mongo_pods(v1)
-    for pod in pods:
-        my_client = get_mongo_client(pod, 27017)
+    pod_details = get_mongo_pods(v1)
+    for pod_data in pod_details:
+        my_client = get_mongo_client(pod_data[0] + "." + pod_data[1] + "." + pod_data[2], 27017)
         if is_master(my_client):
             mongo_role = "primary"
+            logging.debug(f"{pod_data[0]} is a primary")
         else:
             mongo_role = "secondary"
-        label_mongo_pods(v1, pod, generate_pod_label_body({"redmart.com/mongo-role": mongo_role}))
+            logging.debug(f"{pod_data[0]} is a secondary")
+        label_mongo_pods(v1, pod_data[0], generate_pod_label_body({"redmart.com/mongo-role": mongo_role}))
 
 
 # MAIN
