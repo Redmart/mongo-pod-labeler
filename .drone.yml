@@ -6,7 +6,6 @@ pipeline:
     secrets: [ docker_username, docker_password ]
     when:
       event: tag
-
   docker-build-pr:
     image: plugins/docker
     repo: redmart/mongo-pod-labeler
