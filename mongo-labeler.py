@@ -1,4 +1,19 @@
 #!/usr/bin/python3
+
+# Copyright 2019 Redmart Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import argparse
 import logging
 
@@ -31,9 +46,9 @@ def get_mongo_pods(k8s_api):
     return mongo_host_names
 
 
-def label_mongo_pods(k8s_api, pod_name, labels):
-    logging.info(f"applying label {labels.get('redmart.com/mongo-role')} to {pod_name}")
-    return k8s_api.patch_namespaced_pod(name=pod_name, namespace="{}".format(args.namespace), body=labels)
+def label_mongo_pods(k8s_api, pod_name, label):
+    logging.info(f"applying label '{label}' to {pod_name}")
+    return k8s_api.patch_namespaced_pod(name=pod_name, namespace="{}".format(args.namespace), body=label)
 
 
 def generate_pod_label_body(label):
@@ -94,5 +109,5 @@ v1Api = client.CoreV1Api()
 
 while True:
     find_mongo_and_label(v1Api)
-    logging.debug(f"Sleeping {args.sleep_seconds}...")
+    logging.info(f"Sleeping {args.sleep_seconds}...")
     time.sleep(int(args.sleep_seconds))

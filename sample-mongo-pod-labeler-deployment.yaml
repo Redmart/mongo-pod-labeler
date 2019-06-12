@@ -1,0 +1,84 @@
+# Here we create service-account/role and binding to access namespace and pods
+# and Deployment uses the created service account
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: mongo-pod-labeler
+  name: mongo-pod-labeler-service-account
+  namespace: mongo
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mongo-pod-labeler
+  namespace: mongo
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces", "pods"]
+    verbs: ["get", "patch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: mongo-pod-labeler-rolebinding
+  namespace: mongo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: mongo-pod-labeler-role
+subjects:
+  - kind: ServiceAccount
+    name: mongo-pod-labeler-service-account
+    namespace: mongo
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: mongo-pod-labeler
+  name: mongo-pod-labeler
+  namespace: mongo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: mongo-pod-labeler
+  template:
+    metadata:
+      labels:
+        app: mongo-pod-labeler
+    spec:
+      containers:
+        - name: mongo-pod-labeler
+          imagePullPolicy: Always
+          image: "redmart/mongo-pod-labeler:1.0.0"
+          args:
+            - ./mongo-labeler.py
+            - --namespace=mongo  # namespace which deployed mongo
+            - --pod-selector=app=mongodb-replicaset #  key=value of to match and get the mongo pods (here app=mongodb-replicaset)
+            - --update-period=60 # how frequent labelling should happen( default to 60 seconds = 1 minute )
+#            - --verbose         # if u want to see more detailed output
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - ps uaxw | egrep 'python' | grep -v 'grep'
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - ps uaxw | egrep 'python' | grep -v 'grep'
+          resources:
+            limits:
+              cpu: 300m
+              memory: 300Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+      serviceAccountName: mongo-pod-labeler-service-account
+
