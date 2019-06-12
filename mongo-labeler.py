@@ -37,7 +37,7 @@ def label_mongo_pods(k8s_api, pod_name, labels):
 
 
 def generate_pod_label_body(label):
-    patch_content = {"kind": "Pod", "apiVersion": "v1", "metadata": {"redmart.com/mongo-role": label}}
+    patch_content = {"kind": "Pod", "apiVersion": "v1", "metadata": {"labels": {"redmart.com/mongo-role": label}}}
     return patch_content
 
 
