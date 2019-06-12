@@ -4,4 +4,4 @@ RUN pip install kubernetes pymongo
 
 COPY ./mongo-labeler.py .
 
-CMD [ "python", "./mongo-labeler.py" ]
+CMD [ "python", "mongo-labeler.py" ]
